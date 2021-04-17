@@ -48,7 +48,7 @@ runGodZillaAttacks = () => {
 function setBackground() {
   // https://processing.org/reference/background_.html
   // relative link
-  img = loadImage("images/background.jpg");
+  img = loadImage("background.jpg");
   background(img);
 }
 // put the cloudds
