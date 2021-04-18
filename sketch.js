@@ -2,6 +2,8 @@
 // var x, y, etc..
 // you will see setup and draw is not definied or used warnings and other warnings in your console at the bottom right. This is a glitch in how codesandbox loads the libraries and methods from p5. All is well.
 var drawnBuildings = [];
+var drawnCars = [];
+var drawnClouds = [];
 
 var whiteColor = {
   r : 250,
@@ -58,7 +60,7 @@ function setup() {
 
 // this runs on a loop
 function draw() {
-  skylineInteraction();
+  interactions();
 }
 
 // use of a conditional statement
@@ -83,9 +85,9 @@ setFill = (rgbObj) => {
 runGodZillaAttacks = () => {
   setBackground();
   drawRoad();
-  drawCars();
   drawClouds();
   drawSkyline();
+  drawCars();
 }
 
 // This project will do the following
@@ -119,6 +121,7 @@ var Car = function(config) {
   this.w = config.w;
   this.h = config.h;
   this.carColor = config.carColor;
+  this.direction = config.direction;
   //call the buildCar function on new car create
 
   this.buildCar = function() {
@@ -148,7 +151,9 @@ var Car = function(config) {
 
 // public
 Car.prototype.drive = function(x) {
+  console.log('new x', x);
   this.x = x;
+  this.buildCar();
 }
 
 // draw cars
@@ -164,34 +169,39 @@ function drawCars(){
       y: yPosition, 
       w: width,
       h: height,
-      carColor:hotPinkColor
+      carColor:hotPinkColor,
+      direction: 'right'
     },
     { 
       x: 200, 
       y: yPosition, 
       w: width, 
       h: height,
-      carColor:lightPurpleColor 
+      carColor:lightPurpleColor,
+      direction: 'right'
     },
     { 
       x: 400, 
       y: yPosition, 
       w: width, 
       h: height,
-      carColor:greenLimeColor 
+      carColor:greenLimeColor,
+      direction: 'right'
     },
     { 
       x: 150, 
       y: 465, 
       w: width, 
       h: height,
-      carColor:greenLimeColor 
+      carColor:greenLimeColor,
+      direction: 'left'
     },
   ]
 
   for (var i = 0; i < movingCars.length; i++){
     var currentItem = movingCars[i];
     var car = new Car(currentItem);
+    drawnCars.push(car);
   }
 } 
 //CAR END
@@ -260,6 +270,7 @@ function drawClouds() {
     // console.log(clouds[i]);
     var cloud = new Cloud(clouds[i]);
     cloud.draw();
+    drawnClouds.push(cloud);
   };
 } 
 //Cloud End
@@ -361,7 +372,7 @@ function drawSkyline(){
 }
 // END: For Buildings
 
-function skylineInteraction(){
+function interactions(){
   if (mouseIsPressed) {
     for (var i = 0; i < drawnBuildings.length; i++) {
       var currentItem = drawnBuildings[i];
@@ -372,6 +383,32 @@ function skylineInteraction(){
           b: floor(random(0,255))
         })
       }
+    }
+    for (var i = 0; i < drawnCars.length; i++) {
+      var currentItem = drawnCars[i];
+      if (mouseX > currentItem.x && mouseX < (currentItem.x + currentItem.w) && mouseY > currentItem.y && mouseY < (currentItem.y + currentItem.h)) {
+        if (currentItem.direction == 'left') {
+          currentItem.drive(currentItem.x - 1);
+        }
+        else {
+          currentItem.drive(currentItem.x + 1);
+        }
+      }
+    }
+    createCanvas(500, 500);
+    setBackground();
+    drawRoad();
+    for (var i = 0; i <  drawnClouds.length; i++) {
+      // console.log(clouds[i]);
+      drawnClouds[i].draw();
+    }
+    for (var i = 0; i <  drawnBuildings.length; i++) {
+      // console.log(clouds[i]);
+      drawnBuildings[i].draw();
+    }
+    for (var i = 0; i <  drawnCars.length; i++) {
+      // console.log(clouds[i]);
+      drawnCars[i].buildCar();
     }
   }   
 }; 
